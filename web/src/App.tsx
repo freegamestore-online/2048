@@ -1,5 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Shell } from "./components/Shell";
+import { Leaderboard } from "./components/Leaderboard";
+import { useLeaderboard } from "./hooks/useLeaderboard";
 
 type Grid = number[][];
 
@@ -147,6 +149,8 @@ export default function App() {
 
   const containerRef = useRef<HTMLDivElement>(null);
   const touchStart = useRef<{ x: number; y: number } | null>(null);
+  const { topScores, recentScores, submitScore, loading } = useLeaderboard("2048");
+  const submittedRef = useRef(false);
 
   const handleMove = useCallback(
     (direction: "left" | "right" | "up" | "down") => {
@@ -195,6 +199,17 @@ export default function App() {
     window.addEventListener("keydown", handleKey);
     return () => window.removeEventListener("keydown", handleKey);
   }, [handleMove]);
+
+  // Submit score on game over
+  useEffect(() => {
+    if (gameOver && !submittedRef.current) {
+      submittedRef.current = true;
+      submitScore(score);
+    }
+    if (!gameOver) {
+      submittedRef.current = false;
+    }
+  }, [gameOver, score, submitScore]);
 
   const handleTouchStart = (e: React.TouchEvent) => {
     const touch = e.touches[0];
@@ -249,7 +264,16 @@ export default function App() {
   };
 
   return (
-    <Shell>
+    <Shell
+      sidebar={
+        <nav className="flex-1 px-4 flex flex-col gap-3 py-4 overflow-auto">
+          <div className="mt-2 border-t" style={{ borderColor: "var(--line)" }}>
+            <div className="text-xs font-semibold px-4 pt-3" style={{ color: "var(--muted)" }}>Leaderboard</div>
+            <Leaderboard topScores={topScores} recentScores={recentScores} loading={loading} />
+          </div>
+        </nav>
+      }
+    >
       <div
         ref={containerRef}
         onTouchStart={handleTouchStart}
