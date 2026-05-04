@@ -18,7 +18,7 @@ export function Shell({ children }: ShellProps) {
           }}
         >
           <div className="p-6 font-bold text-lg" style={{ fontFamily: "Fraunces, serif" }}>
-            APPNAME
+            2048game
           </div>
           <nav className="flex-1 px-4">
             {/* Add nav items here */}
@@ -45,7 +45,7 @@ export function Shell({ children }: ShellProps) {
           style={{ borderColor: "var(--line)", background: "var(--panel)" }}
         >
           <span className="font-bold" style={{ fontFamily: "Fraunces, serif" }}>
-            APPNAME
+            2048game
           </span>
         </header>
         <main className="flex-1 overflow-auto p-4">{children}</main>

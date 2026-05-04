@@ -1,6 +1,6 @@
 {
-  "name": "APPNAME",
-  "short_name": "APPNAME",
+  "name": "2048game",
+  "short_name": "2048game",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#ffffff",
