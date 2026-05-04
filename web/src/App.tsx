@@ -439,9 +439,10 @@ export default function App() {
           )}
         </div>
 
-        <p style={{ marginTop: 16, fontSize: "0.8rem", color: "var(--muted)", textAlign: "center" }}>
-          Use arrow keys or swipe to play. Join tiles to reach 2048!
-        </p>
+        <div style={{ marginTop: 16, fontSize: "0.8rem", color: "var(--muted)", textAlign: "center", lineHeight: 1.6 }}>
+          <p><strong style={{ color: "var(--ink)" }}>How to play:</strong> Swipe or use arrow keys to slide all tiles. When two tiles with the same number collide, they merge into one. Reach the 2048 tile to win!</p>
+          <p style={{ marginTop: 4 }}>A new tile (2 or 4) appears after each move. Plan ahead — when no moves are left, it's game over.</p>
+        </div>
       </div>
     </Shell>
   );
