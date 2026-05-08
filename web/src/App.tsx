@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { GameShell, GameTopbar } from "@freeappstore/games";
+import { GameShell, GameTopbar } from "@freegamestore/games";
 import { useLeaderboard } from "./hooks/useLeaderboard";
 
 type Grid = number[][];
