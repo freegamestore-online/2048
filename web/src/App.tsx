@@ -288,7 +288,7 @@ export default function App() {
               </ul>
             </div>
           }
-          actions={<><button onClick={resetGame}>New Game</button><GameAuth /></>}
+          actions={<><button className="min-h-[2.75rem] min-w-[2.75rem]" onClick={resetGame}>New Game</button><GameAuth /></>}
         />
       }
     >
@@ -365,6 +365,7 @@ export default function App() {
                     border: "none",
                     borderRadius: 6,
                     padding: "8px 20px",
+                    minHeight: "2.75rem",
                     cursor: "pointer",
                     fontWeight: 600,
                   }}
@@ -401,6 +402,7 @@ export default function App() {
                       border: "none",
                       borderRadius: 6,
                       padding: "8px 16px",
+                      minHeight: "2.75rem",
                       cursor: "pointer",
                       fontWeight: 600,
                     }}
@@ -415,6 +417,7 @@ export default function App() {
                       border: "1px solid var(--line)",
                       borderRadius: 6,
                       padding: "8px 16px",
+                      minHeight: "2.75rem",
                       cursor: "pointer",
                       fontWeight: 600,
                     }}
