@@ -1,6 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { Shell } from "./components/Shell";
-import { Leaderboard } from "./components/Leaderboard";
+import { GameShell, GameTopbar } from "@freeappstore/games";
 import { useLeaderboard } from "./hooks/useLeaderboard";
 
 type Grid = number[][];
@@ -149,7 +148,7 @@ export default function App() {
 
   const containerRef = useRef<HTMLDivElement>(null);
   const touchStart = useRef<{ x: number; y: number } | null>(null);
-  const { topScores, recentScores, submitScore, loading } = useLeaderboard("2048");
+  const { submitScore } = useLeaderboard("2048");
   const submittedRef = useRef(false);
 
   const handleMove = useCallback(
@@ -264,210 +263,158 @@ export default function App() {
   };
 
   return (
-    <Shell
-      sidebar={
-        <nav className="flex-1 px-4 flex flex-col gap-3 py-4 overflow-auto">
-          <div className="mt-2 border-t" style={{ borderColor: "var(--line)" }}>
-            <div className="text-xs font-semibold px-4 pt-3" style={{ color: "var(--muted)" }}>Leaderboard</div>
-            <Leaderboard topScores={topScores} recentScores={recentScores} loading={loading} />
-          </div>
-        </nav>
+    <GameShell
+      topbar={
+        <GameTopbar
+          title="2048"
+          stats={[
+            { label: "Score", value: score, accent: true },
+            { label: "Best", value: best },
+          ]}
+          actions={<button onClick={resetGame}>New Game</button>}
+        />
       }
     >
-      <div
-        ref={containerRef}
-        onTouchStart={handleTouchStart}
-        onTouchEnd={handleTouchEnd}
-        style={{ maxWidth: 400, margin: "0 auto", userSelect: "none" }}
-      >
-        {/* Header */}
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
-          <h1 className="display-font" style={{ fontSize: "2rem", margin: 0, color: "var(--ink)" }}>
-            2048
-          </h1>
-          <div style={{ display: "flex", gap: 8 }}>
-            <div
-              style={{
-                background: "var(--panel)",
-                border: "1px solid var(--line)",
-                borderRadius: 6,
-                padding: "4px 12px",
-                textAlign: "center",
-              }}
-            >
-              <div style={{ fontSize: "0.65rem", color: "var(--muted)", textTransform: "uppercase" }}>Score</div>
-              <div className="display-font" style={{ fontSize: "1.1rem", color: "var(--ink)" }}>
-                {score}
-              </div>
-            </div>
-            <div
-              style={{
-                background: "var(--panel)",
-                border: "1px solid var(--line)",
-                borderRadius: 6,
-                padding: "4px 12px",
-                textAlign: "center",
-              }}
-            >
-              <div style={{ fontSize: "0.65rem", color: "var(--muted)", textTransform: "uppercase" }}>Best</div>
-              <div className="display-font" style={{ fontSize: "1.1rem", color: "var(--ink)" }}>
-                {best}
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* New Game button */}
-        <div style={{ marginBottom: 16 }}>
-          <button
-            onClick={resetGame}
+      <div className="relative w-full h-full">
+        <div
+          ref={containerRef}
+          onTouchStart={handleTouchStart}
+          onTouchEnd={handleTouchEnd}
+          style={{ maxWidth: 400, margin: "0 auto", padding: 16, userSelect: "none" }}
+        >
+          {/* Grid */}
+          <div
             style={{
-              background: "var(--accent)",
-              color: "#fff",
-              border: "none",
-              borderRadius: 6,
-              padding: "8px 16px",
-              cursor: "pointer",
-              fontWeight: 600,
-              fontSize: "0.85rem",
+              position: "relative",
+              background: "#bbada0",
+              borderRadius: 8,
+              padding: 8,
+              display: "grid",
+              gridTemplateColumns: `repeat(${SIZE}, 1fr)`,
+              gap: 8,
+              aspectRatio: "1",
             }}
           >
-            New Game
-          </button>
-        </div>
-
-        {/* Grid */}
-        <div
-          style={{
-            position: "relative",
-            background: "#bbada0",
-            borderRadius: 8,
-            padding: 8,
-            display: "grid",
-            gridTemplateColumns: `repeat(${SIZE}, 1fr)`,
-            gap: 8,
-            aspectRatio: "1",
-          }}
-        >
-          {grid.flat().map((value, i) => (
-            <div
-              key={i}
-              style={{
-                background: getTileColor(value),
-                borderRadius: 4,
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                aspectRatio: "1",
-              }}
-            >
-              {value > 0 && (
-                <span
-                  className="display-font"
-                  style={{
-                    fontSize: getTileFontSize(value),
-                    fontWeight: 700,
-                    color: getTileTextColor(value),
-                  }}
-                >
-                  {value}
-                </span>
-              )}
-            </div>
-          ))}
-
-          {/* Overlay: Game Over */}
-          {gameOver && (
-            <div
-              style={{
-                position: "absolute",
-                inset: 0,
-                background: "rgba(238,228,218,0.73)",
-                borderRadius: 8,
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "center",
-                justifyContent: "center",
-                gap: 12,
-              }}
-            >
-              <span className="display-font" style={{ fontSize: "1.8rem", color: "#776e65" }}>
-                Game Over!
-              </span>
-              <button
-                onClick={resetGame}
+            {grid.flat().map((value, i) => (
+              <div
+                key={i}
                 style={{
-                  background: "var(--accent)",
-                  color: "#fff",
-                  border: "none",
-                  borderRadius: 6,
-                  padding: "8px 20px",
-                  cursor: "pointer",
-                  fontWeight: 600,
+                  background: getTileColor(value),
+                  borderRadius: 4,
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  aspectRatio: "1",
                 }}
               >
-                Try Again
-              </button>
-            </div>
-          )}
+                {value > 0 && (
+                  <span
+                    className="display-font"
+                    style={{
+                      fontSize: getTileFontSize(value),
+                      fontWeight: 700,
+                      color: getTileTextColor(value),
+                    }}
+                  >
+                    {value}
+                  </span>
+                )}
+              </div>
+            ))}
 
-          {/* Overlay: Won */}
-          {won && !keepPlaying && (
-            <div
-              style={{
-                position: "absolute",
-                inset: 0,
-                background: "rgba(237,194,46,0.5)",
-                borderRadius: 8,
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "center",
-                justifyContent: "center",
-                gap: 12,
-              }}
-            >
-              <span className="display-font" style={{ fontSize: "1.8rem", color: "#f9f6f2" }}>
-                You Win!
-              </span>
-              <div style={{ display: "flex", gap: 8 }}>
+            {/* Overlay: Game Over */}
+            {gameOver && (
+              <div
+                style={{
+                  position: "absolute",
+                  inset: 0,
+                  background: "rgba(238,228,218,0.73)",
+                  borderRadius: 8,
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  gap: 12,
+                }}
+              >
+                <span className="display-font" style={{ fontSize: "1.8rem", color: "#776e65" }}>
+                  Game Over!
+                </span>
                 <button
-                  onClick={continueGame}
+                  onClick={resetGame}
                   style={{
                     background: "var(--accent)",
                     color: "#fff",
                     border: "none",
                     borderRadius: 6,
-                    padding: "8px 16px",
+                    padding: "8px 20px",
                     cursor: "pointer",
                     fontWeight: 600,
                   }}
                 >
-                  Keep Going
-                </button>
-                <button
-                  onClick={resetGame}
-                  style={{
-                    background: "var(--panel)",
-                    color: "var(--ink)",
-                    border: "1px solid var(--line)",
-                    borderRadius: 6,
-                    padding: "8px 16px",
-                    cursor: "pointer",
-                    fontWeight: 600,
-                  }}
-                >
-                  New Game
+                  Try Again
                 </button>
               </div>
-            </div>
-          )}
-        </div>
+            )}
 
-        <div style={{ marginTop: 16, fontSize: "0.8rem", color: "var(--muted)", textAlign: "center", lineHeight: 1.6 }}>
-          <p><strong style={{ color: "var(--ink)" }}>How to play:</strong> Swipe or use arrow keys to slide all tiles. When two tiles with the same number collide, they merge into one. Reach the 2048 tile to win!</p>
-          <p style={{ marginTop: 4 }}>A new tile (2 or 4) appears after each move. Plan ahead — when no moves are left, it's game over.</p>
+            {/* Overlay: Won */}
+            {won && !keepPlaying && (
+              <div
+                style={{
+                  position: "absolute",
+                  inset: 0,
+                  background: "rgba(237,194,46,0.5)",
+                  borderRadius: 8,
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  gap: 12,
+                }}
+              >
+                <span className="display-font" style={{ fontSize: "1.8rem", color: "#f9f6f2" }}>
+                  You Win!
+                </span>
+                <div style={{ display: "flex", gap: 8 }}>
+                  <button
+                    onClick={continueGame}
+                    style={{
+                      background: "var(--accent)",
+                      color: "#fff",
+                      border: "none",
+                      borderRadius: 6,
+                      padding: "8px 16px",
+                      cursor: "pointer",
+                      fontWeight: 600,
+                    }}
+                  >
+                    Keep Going
+                  </button>
+                  <button
+                    onClick={resetGame}
+                    style={{
+                      background: "var(--panel)",
+                      color: "var(--ink)",
+                      border: "1px solid var(--line)",
+                      borderRadius: 6,
+                      padding: "8px 16px",
+                      cursor: "pointer",
+                      fontWeight: 600,
+                    }}
+                  >
+                    New Game
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
+
+          <div style={{ marginTop: 16, fontSize: "0.8rem", color: "var(--muted)", textAlign: "center", lineHeight: 1.6 }}>
+            <p><strong style={{ color: "var(--ink)" }}>How to play:</strong> Swipe or use arrow keys to slide all tiles. When two tiles with the same number collide, they merge into one. Reach the 2048 tile to win!</p>
+            <p style={{ marginTop: 4 }}>A new tile (2 or 4) appears after each move. Plan ahead — when no moves are left, it's game over.</p>
+          </div>
         </div>
       </div>
-    </Shell>
+    </GameShell>
   );
 }
