@@ -271,6 +271,23 @@ export default function App() {
             { label: "Score", value: score, accent: true },
             { label: "Best", value: best },
           ]}
+          rules={
+            <div>
+              <h3 style={{marginBottom:'0.5rem',fontWeight:700}}>2048</h3>
+              <p>Slide and merge tiles to reach 2048.</p>
+              <h4 style={{marginTop:'0.75rem',fontWeight:600}}>Controls</h4>
+              <ul style={{paddingLeft:'1.2rem',marginTop:'0.25rem'}}>
+                <li>Arrow keys or swipe to slide tiles</li>
+              </ul>
+              <h4 style={{marginTop:'0.75rem',fontWeight:600}}>Rules</h4>
+              <ul style={{paddingLeft:'1.2rem',marginTop:'0.25rem'}}>
+                <li>Matching tiles merge and double</li>
+                <li>A new tile appears after each move</li>
+                <li>Reach 2048 to win</li>
+                <li>Game over when no moves are left</li>
+              </ul>
+            </div>
+          }
           actions={<><button onClick={resetGame}>New Game</button><GameAuth /></>}
         />
       }
