@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { GameShell, GameTopbar } from "@freegamestore/games";
+import { GameShell, GameTopbar, GameAuth } from "@freegamestore/games";
 import { useLeaderboard } from "./hooks/useLeaderboard";
 
 type Grid = number[][];
@@ -271,7 +271,7 @@ export default function App() {
             { label: "Score", value: score, accent: true },
             { label: "Best", value: best },
           ]}
-          actions={<button onClick={resetGame}>New Game</button>}
+          actions={<><button onClick={resetGame}>New Game</button><GameAuth /></>}
         />
       }
     >
