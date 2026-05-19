@@ -1,6 +1,14 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { GameShell, GameTopbar, GameAuth } from "@freegamestore/games";
+import { GameShell, GameTopbar, GameAuth, useGameSounds } from "@freegamestore/games";
 import { useLeaderboard } from '@freegamestore/games';
+
+type SoundsApi = ReturnType<typeof useGameSounds>;
+
+function AudioBridge({ apiRef }: { apiRef: React.MutableRefObject<SoundsApi | null> }) {
+  const sounds = useGameSounds();
+  apiRef.current = sounds;
+  return null;
+}
 
 type Grid = number[][];
 
@@ -122,6 +130,16 @@ function initGrid(): Grid {
   return grid;
 }
 
+function maxTile(grid: Grid): number {
+  let m = 0;
+  for (let r = 0; r < SIZE; r++) {
+    for (let c = 0; c < SIZE; c++) {
+      if (grid[r][c] > m) m = grid[r][c];
+    }
+  }
+  return m;
+}
+
 function getBestScore(): number {
   try {
     return Number(localStorage.getItem("2048-best") || "0");
@@ -150,6 +168,8 @@ export default function App() {
   const touchStart = useRef<{ x: number; y: number } | null>(null);
   const { submitScore } = useLeaderboard("2048");
   const submittedRef = useRef(false);
+  const audioRef = useRef<SoundsApi | null>(null);
+  const highestTileRef = useRef<number>(maxTile(grid));
 
   const handleMove = useCallback(
     (direction: "left" | "right" | "up" | "down") => {
@@ -159,10 +179,21 @@ export default function App() {
       const result = move(grid, direction);
       if (!result.moved) return;
 
+      audioRef.current?.playMove();
+      if (result.score > 0) {
+        audioRef.current?.playScore();
+      }
+
       const newGrid = addRandomTile(result.grid);
       const newScore = score + result.score;
       setGrid(newGrid);
       setScore(newScore);
+
+      const newMax = maxTile(newGrid);
+      if (newMax > highestTileRef.current) {
+        highestTileRef.current = newMax;
+        audioRef.current?.playLevelUp();
+      }
 
       if (newScore > best) {
         setBest(newScore);
@@ -176,6 +207,7 @@ export default function App() {
 
       if (!canMove(newGrid)) {
         setGameOver(true);
+        audioRef.current?.playGameOver();
       }
     },
     [grid, score, best, gameOver, won, keepPlaying]
@@ -235,11 +267,13 @@ export default function App() {
   };
 
   const resetGame = () => {
-    setGrid(initGrid());
+    const fresh = initGrid();
+    setGrid(fresh);
     setScore(0);
     setGameOver(false);
     setWon(false);
     setKeepPlaying(false);
+    highestTileRef.current = maxTile(fresh);
   };
 
   const continueGame = () => {
@@ -292,6 +326,7 @@ export default function App() {
         />
       }
     >
+      <AudioBridge apiRef={audioRef} />
       <div className="relative w-full h-full">
         <div
           ref={containerRef}
