@@ -90,8 +90,12 @@ export default function App() {
         ArrowRight: "right",
         ArrowUp: "up",
         ArrowDown: "down",
+        a: "left",
+        d: "right",
+        w: "up",
+        s: "down",
       };
-      const dir = map[e.key];
+      const dir = map[e.key.length === 1 ? e.key.toLowerCase() : e.key];
       if (dir) {
         e.preventDefault();
         handleMove(dir);
@@ -149,6 +153,11 @@ export default function App() {
   const continueGame = () => {
     setKeepPlaying(true);
     setWon(false);
+    // The winning move may also have filled the board.
+    if (!canMove(grid)) {
+      setGameOver(true);
+      audioRef.current?.playGameOver();
+    }
   };
 
   const getTileColor = (value: number): string => {
@@ -181,7 +190,7 @@ export default function App() {
               <p>Slide and merge tiles to reach 2048.</p>
               <h4 style={{marginTop:'0.75rem',fontWeight:600}}>Controls</h4>
               <ul style={{paddingLeft:'1.2rem',marginTop:'0.25rem'}}>
-                <li>Arrow keys or swipe to slide tiles</li>
+                <li>Arrow keys, WASD or swipe to slide tiles</li>
               </ul>
               <h4 style={{marginTop:'0.75rem',fontWeight:600}}>Rules</h4>
               <ul style={{paddingLeft:'1.2rem',marginTop:'0.25rem'}}>
@@ -192,6 +201,7 @@ export default function App() {
               </ul>
             </div>
           }
+          onRestart={resetGame}
           actions={<GameAuth />}
         />
       }
@@ -201,7 +211,7 @@ export default function App() {
         <div
           onTouchStart={handleTouchStart}
           onTouchEnd={handleTouchEnd}
-          style={{ maxWidth: 400, margin: "0 auto", padding: 16, userSelect: "none" }}
+          style={{ maxWidth: 400, margin: "0 auto", padding: 16, userSelect: "none", touchAction: "none" }}
         >
           {/* Grid */}
           <div
@@ -334,7 +344,7 @@ export default function App() {
           </div>
 
           <div style={{ marginTop: 16, fontSize: "0.8rem", color: "var(--muted)", textAlign: "center", lineHeight: 1.6 }}>
-            <p><strong style={{ color: "var(--ink)" }}>How to play:</strong> Swipe or use arrow keys to slide all tiles. When two tiles with the same number collide, they merge into one. Reach the 2048 tile to win!</p>
+            <p><strong style={{ color: "var(--ink)" }}>How to play:</strong> Swipe or use arrow keys / WASD to slide all tiles. When two tiles with the same number collide, they merge into one. Reach the 2048 tile to win!</p>
             <p style={{ marginTop: 4 }}>A new tile (2 or 4) appears after each move. Plan ahead — when no moves are left, it's game over.</p>
           </div>
         </div>
